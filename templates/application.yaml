@@ -1,0 +1,36 @@
+{{- $root := . -}}
+{{- range $app, $config := .Values.resources }}
+  {{- if and (kindIs "map" $config) (hasKey $config "enabled") (eq $config.enabled true) }}
+    {{- if hasKey $config "path" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubeflow-{{ default $config.appNameOverride (kebabcase $app) }}
+  namespace: {{ $root.Values.argoNamespace }}
+  {{- if $config.labels }}
+  labels: 
+{{ toYaml $config.labels | indent 4 }}
+  {{- end }}
+{{- $annotations := merge ($root.Values.commonAppAnnotations | default (dict)) ($config.annotations | default (dict)) }}
+{{- if $annotations }}
+  annotations:
+{{ toYaml $annotations | indent 4 }}
+{{- end }}
+spec:
+  project: {{ $root.Values.argoProjectName }}
+  source:
+    repoURL:  {{ default $root.Values.kubeflowManifestsRepo $config.repoOverride }}
+    targetRevision: {{ default $root.Values.kubeflowManifestsRepoBranch $config.repoBranchOverride }}
+    path: {{ $config.path }}
+    {{- if $config.kustomize }}
+    kustomize: 
+{{ toYaml $config.kustomize | indent 6 }}
+    {{- end }}
+  destination:
+    server: {{ $root.Values.destinationServer }}
+    namespace: {{ $root.Values.argoNamespace }}
+{{ toYaml (default $root.Values.defaultAppSpec $config.appSpecOverride) | indent 2 }}
+    {{- end }}
+  {{- end }}
+{{- end }}

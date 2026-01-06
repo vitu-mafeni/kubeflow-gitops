@@ -1,0 +1,157 @@
+argoProjectName: kubeflow
+argoNamespace: argocd
+commonAppAnnotations: {}
+destinationServer: https://kubernetes.default.svc
+kubeflowManifestsRepo: https://github.com/kubeflow/manifests
+kubeflowManifestsRepoBranch: v1.11-branch
+defaultAppSpec:
+  ignoreDifferences:
+  - group: argoproj.io
+    jsonPointers:
+    - /status
+    kind: Application
+  syncPolicy:
+    automated:
+      allowEmpty: true
+      prune: true
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 20s
+        factor: 1
+        maxDuration: 20s
+      limit: 30
+    syncOptions:
+    - ApplyOutOfSyncOnly=true
+    - ServerSideApply=true
+    - CreateNamespace=true
+
+resources:
+  certManagerBase:
+    enabled: true
+    path: common/cert-manager/base
+    annotations:
+      argocd.argoproj.io/sync-wave: "-100"
+
+  certManagerKubeflowIssuer:
+    enabled: true
+    path: common/cert-manager/kubeflow-issuer/base
+    annotations:
+      argocd.argoproj.io/sync-wave: "-90"
+
+  istioCrds:
+    enabled: true
+    path: common/istio/istio-crds/base
+    annotations:
+      argocd.argoproj.io/sync-wave: "-80"
+
+  istioNamespace:
+    enabled: true
+    path: common/istio/istio-namespace/base
+    annotations:
+      argocd.argoproj.io/sync-wave: "-70"
+
+  istioInstall:
+    enabled: true
+    path: common/istio/istio-install/overlays/oauth2-proxy
+
+  oauth2Proxy:
+    enabled: true
+    path: common/oauth2-proxy/overlays/m2m-dex-only
+
+  dex:
+    enabled: true
+    path: common/dex/overlays/oauth2-proxy
+
+  knativeServing:
+    enabled: true
+    path: common/knative/knative-serving/overlays/gateways
+
+  clusterLocalGateway:
+    enabled: true
+    path: common/istio/cluster-local-gateway/base
+
+  namespace:
+    enabled: true
+    path: common/kubeflow-namespace/base
+
+  networkPolicies:
+    enabled: true
+    path: common/networkpolicies/base
+
+  roles:
+    enabled: true
+    path: common/kubeflow-roles/base
+
+  istioResources:
+    enabled: true
+    path: common/istio/kubeflow-istio-resources/base
+
+  pipelines:
+    enabled: true
+    path: applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
+
+  katib:
+    enabled: true
+    path: applications/katib/upstream/installs/katib-with-kubeflow
+
+  centralDashboard:
+    enabled: true
+    path: applications/centraldashboard/overlays/oauth2-proxy
+
+  admissionWebhook:
+    enabled: true
+    path: applications/admission-webhook/upstream/overlays/cert-manager
+
+  jupyterWebApp:
+    enabled: true
+    path: applications/jupyter/jupyter-web-app/upstream/overlays/istio
+
+  notebookController:
+    enabled: true
+    path: applications/jupyter/notebook-controller/upstream/overlays/kubeflow
+
+  profiles:
+    enabled: true
+    path: applications/profiles/pss
+
+  pvcViewer:
+    enabled: true
+    path: applications/pvcviewer-controller/upstream/base
+
+  volumesWebApp:
+    enabled: true
+    path: applications/volumes-web-app/upstream/overlays/istio
+
+  tensorboardController:
+    enabled: true
+    path: applications/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+
+  tensorboardsWebApp:
+    enabled: true
+    path: applications/tensorboard/tensorboards-web-app/upstream/overlays/istio
+
+  trainingOperator:
+    enabled: true
+    path: applications/trainer/overlays
+
+  userNamespace:
+    enabled: true
+    path: common/user-namespace/base
+    # kustomize:
+    #   components:
+    #     - ../../security/PSS/dynamic/baseline
+  kserve:
+    enabled: true
+    path: applications/kserve/kserve
+
+  kserveModelsWebApp:
+    enabled: true
+    path: applications/kserve/models-web-app/overlays/kubeflow
+
+  sparkOperator:
+    enabled: true
+    path: applications/spark/spark-operator/overlays/kubeflow
+
+raw:
+  resources: {}
