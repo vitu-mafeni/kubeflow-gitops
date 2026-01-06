@@ -12,10 +12,20 @@ Each resource corresponds to a kubeflow resource and is preconfigured with paths
 ## Usage
 
 ### Installation
-
+Helm can install directly from a Git repo (Helm ≥ 3.8):
 ```bash
-helm repo add kubeflow-gitops https://vitu-mafeni.github.io/kubeflow-gitops
-helm install kubeflow 
+helm install kubeflow \
+  https://github.com/vitu-mafeni/kubeflow-gitops.git \
+  --namespace kubeflow \
+  --create-namespace
+```
+Or pinned to a branch:
+```bash 
+helm install kubeflow \
+  https://github.com/vitu-mafeni/kubeflow-gitops.git \
+  --namespace kubeflow \
+  --create-namespace \
+  --version main
 ```
 
 this will install a working kubeflow exactly like [example](https://github.com/kubeflow/manifests/blob/master/example/kustomization.yaml)
