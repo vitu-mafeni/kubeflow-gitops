@@ -14,7 +14,7 @@ defaultAppSpec:
     automated:
       allowEmpty: true
       prune: true
-      selfHeal: true
+      selfHeal: false
     retry:
       backoff:
         duration: 20s

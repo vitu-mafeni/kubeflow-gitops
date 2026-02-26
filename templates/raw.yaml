@@ -11,7 +11,7 @@ metadata:
 spec:
   project: {{ .Values.argoProjectName }}
   source:
-    repoURL: https://thecodingsheikh.github.io/helm-charts
+    repoURL: https://vitu-mafeni.github.io/helm-charts/
     targetRevision: 1.0.1
     chart: raw
     helm:
