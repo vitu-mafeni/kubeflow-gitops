@@ -2,7 +2,7 @@ argoProjectName: kubeflow
 argoNamespace: argocd
 commonAppAnnotations: {}
 destinationServer: https://kubernetes.default.svc
-kubeflowManifestsRepo: https://github.com/kubeflow/manifests
+kubeflowManifestsRepo: https://github.com/vitu-mafeni/kubeflow-manifests.git
 kubeflowManifestsRepoBranch: v1.11-branch
 defaultAppSpec:
   ignoreDifferences:
